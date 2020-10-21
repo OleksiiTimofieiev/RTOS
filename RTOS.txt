@@ -1,0 +1,26 @@
+----- intro
+
+- RTOS == predictable computing, Real-Time responding on events, time deterministic nature, time deterministic switch between tasks == context switch time;
+- threads are executed in the order of their priority;
+
+----- lib including
+
+- /Users/otimofie/.ac6/SW4STM32/firmwares
+- FreeRTOS has the architecture specific code in portable/GCC folder => port.c
+- FreeRTOS config file in ./Config
+
+----- general info
+
+- two tasks on core looks like simultaneously as it is too fast as from human perspective
+- each task has its own stack
+- at the end of the task it has to be deleted == vTaskDelete()
+- static => will be created as the global variable in a way;
+- xTaskCreate == create subtask in the memory [RAM{Stack & Heap}] {TaskContolBlock, Stack}
+- xTaskCreate => TaskControlBlock, Task Stack, Ready tasks are being managed by scheduler;
+- virtual COM port can be used for debugging or semihosting (STM32 feature);
+- dumplex communication: Tx, Rx lines
+- every pin is on the bus, without clock it wont work, pins can be configured in different ways according to the datasheet
+- idle task is created by kernel itself
+- if ready and correct priority - will be executed
+- idle task deallocates all other tasks
+- Tmr Svc == timer task (software task == background daemon) is also created is it is configured == configUSE_TIMERS
