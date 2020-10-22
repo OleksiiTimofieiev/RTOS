@@ -9,6 +9,23 @@
 - FreeRTOS has the architecture specific code in portable/GCC folder => port.c
 - FreeRTOS config file in ./Config
 
+----- GPIO
+
+- each port contains set of pins
+
+----- UART/USART
+
+- no specific port
+- async == clock will be separate and start/stop bits;
+- baud rate == how fast data is being sent {single bit}; TX/RX; FIFO; Tx/Rx buffers /control blocks;
+- CTS == ClearToSend; RTS == RequestToSend; {hardware control}
+- start bit {low} / stop bit {high} == USART control registers;
+- master and slave has to have the same baud rate
+- parity bit
+- M bit == word length
+- Virtual Com port is necessary to debug on PC
+- interrupts are available
+
 ----- general info
 
 - two tasks on core looks like simultaneously as it is too fast as from human perspective
@@ -36,15 +53,5 @@
 - Command list can be used 
 - Notifications can be used = TCB variable, event to task; wait - notify
 - all are on bus and has to be unblocked -> init and peripheral clock
+- everything has a register that can be checked/modified;
 
------ UART/USART
-
-- no specific port
-- async == clock will be separate and start/stop bits;
-- baud rate == how fast data is being sent {single bit}; TX/RX; FIFO; Tx/Rx buffers /control blocks;
-- CTS == ClearToSend; RTS == RequestToSend; {hardware control}
-- start bit {low} / stop bit {high} == USART control registers;
-- master and slave has to have the same baud rate
-- parity bit
-- M bit == word length
-- Virtual Com port is necessary to debug on PC
