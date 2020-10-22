@@ -21,9 +21,6 @@
 TaskHandle_t * xTaskHandle1 = NULL;
 TaskHandle_t * xTaskHandle2 = NULL;
 
-void vTask1_Handler(void *params);
-void vTask2_Handler(void *params);
-
 #ifdef USE_SEMIHOSTING
 // to be used: -specs=rdimon.specs -lc -lrdimon in lincer/misc
 	extern void initialise_monitor_handles();
@@ -38,9 +35,17 @@ void		printMsg(char *msg);
 #define AVAILABLE TRUE
 #define NON_AVAILABLE FALSE
 
+#define PRESSED TRUE
+#define NOT_PRESSED FALSE
+
 // Global variable section
 char usr_msg[250] = {0};
 uint8_t UART_ACCESS_KEY = AVAILABLE;
+
+void led_task_handler(void *params);
+void button_task_handler(void *params);
+
+uint8_t button_status_flag = NOT_PRESSED;
 
 int main(void)
 {
@@ -61,8 +66,8 @@ int main(void)
 //	screen /dev/tty.usbmodem143103 115200
 
 	// 3. Create tasks;
-	xTaskCreate(vTask1_Handler, "Task-1", configMINIMAL_STACK_SIZE, NULL, 2, xTaskHandle1);
-	xTaskCreate(vTask2_Handler, "Task-2", configMINIMAL_STACK_SIZE, NULL, 2, xTaskHandle2);
+	xTaskCreate(led_task_handler, "LED-TASK", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(button_task_handler, "BUTTON-TASK", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
 	// 4, start the scheduler
 	vTaskStartScheduler();
@@ -71,32 +76,40 @@ int main(void)
 	for(;;);
 }
 
-void vTask1_Handler(void *params)
+void led_task_handler(void *params)
 {
-	while(1){
-//		printf("Hello-1\n");
-		if (UART_ACCESS_KEY == AVAILABLE)
+	while (1)
+	{
+		if (button_status_flag == PRESSED)
 		{
-			UART_ACCESS_KEY = NON_AVAILABLE;
-			printMsg("Hello-1\r\n");
-			UART_ACCESS_KEY = AVAILABLE;
-			taskYIELD();
+			GPIO_WriteBit(GPIOA, GPIO_Pin_5, Bit_SET);
+		}
+		else
+		{
+			GPIO_WriteBit(GPIOA, GPIO_Pin_5, Bit_RESET);
 		}
 	}
 }
-void vTask2_Handler(void *params)
+
+void button_task_handler(void *params)
 {
-	while(1){
-//		printf("Hello-2\n");
-		if (UART_ACCESS_KEY == AVAILABLE)
+	while (1)
+	{
+		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13))
 		{
-			UART_ACCESS_KEY = NON_AVAILABLE;
-			printMsg("Hello-2\r\n");
-			UART_ACCESS_KEY = AVAILABLE;
-			taskYIELD();
+			// !pressed
+			printMsg("NOT PRESSED\r\n");
+			button_status_flag = NOT_PRESSED;
+		}
+		else
+		{
+			// pressed
+			printMsg("PRESSED\r\n");
+			button_status_flag = PRESSED;
 		}
 	}
 }
+
 static void	prvSetupUART(void)
 {
 	// 1. Enable UART2 peripheral clock and GPIOA - rcc.c - APB == communication bus
@@ -137,18 +150,51 @@ static void	prvSetupUART(void)
 	USART_Cmd(USART2, ENABLE);
 
 	// listen on Mac
-	//minicom -D /dev/tty.usbmodem143103 -b 115200
+	//minicom -D /dev/tty.usbmodem141103 -b 115200
 }
+
+void prvSetupGpio(void)
+{
+	// this function is board specific
+	//Peripheral clock enable for GPIOA and GPIOC
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
+
+	GPIO_InitTypeDef led_init, button_init;
+
+	led_init.GPIO_Mode = GPIO_Mode_OUT;
+	led_init.GPIO_OType = GPIO_OType_PP;
+	led_init.GPIO_Pin = GPIO_Pin_5;
+	led_init.GPIO_Speed = GPIO_Low_Speed;
+	led_init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+
+	GPIO_Init(GPIOA, &led_init);
+
+	button_init.GPIO_Mode = GPIO_Mode_IN;
+	button_init.GPIO_OType = GPIO_OType_PP;
+	button_init.GPIO_Pin = GPIO_Pin_13;
+	button_init.GPIO_Speed = GPIO_Low_Speed;
+	button_init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+
+	GPIO_Init(GPIOC, &button_init);
+}
+
 
 static void	prvSetupHardware(void)
 {
+	// UART2
 	prvSetupUART();
+
+	// GPIO - LED
+	prvSetupGpio();
 }
 
 void		printMsg(char *msg)
 {
 	for (uint32_t i = 0; i < strlen(msg); i++)
 	{
+		// wait finish of writing to the bus;
 		while( USART_GetFlagStatus(USART2, USART_FLAG_TXE) != SET );
 		USART_SendData(USART2, msg[i]);
 	}
