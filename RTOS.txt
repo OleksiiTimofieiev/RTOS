@@ -35,3 +35,16 @@
 - Task can be suspended, ready, blocked, deleted
 - Command list can be used 
 - Notifications can be used = TCB variable, event to task; wait - notify
+- all are on bus and has to be unblocked -> init and peripheral clock
+
+----- UART/USART
+
+- no specific port
+- async == clock will be separate and start/stop bits;
+- baud rate == how fast data is being sent {single bit}; TX/RX; FIFO; Tx/Rx buffers /control blocks;
+- CTS == ClearToSend; RTS == RequestToSend; {hardware control}
+- start bit {low} / stop bit {high} == USART control registers;
+- master and slave has to have the same baud rate
+- parity bit
+- M bit == word length
+- Virtual Com port is necessary to debug on PC
