@@ -24,3 +24,14 @@
 - if ready and correct priority - will be executed
 - idle task deallocates all other tasks
 - Tmr Svc == timer task (software task == background daemon) is also created is it is configured == configUSE_TIMERS
+- Free/Open/Safe RTOS
+- RTOS is a kernel code
+- Memory Paramus are configured in some MCU configuration or RTOS: heap, stack
+- x == not a stdint type == naming convention; pc == pointer to char
+- Remember about power issues = organize tasks correctly
+- RTOS func start with the name of the file == naming, pro == private void
+- VTaskDelay to have idle task
+- Task can be deleted, idle task deletes task, vTaskDeleteNULL if itself
+- Task can be suspended, ready, blocked, deleted
+- Command list can be used 
+- Notifications can be used = TCB variable, event to task; wait - notify
