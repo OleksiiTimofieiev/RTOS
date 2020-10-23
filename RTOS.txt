@@ -31,9 +31,13 @@
 - master and couple of slave devices
 - SCLK, MOSI (master out slave in), MISO, gpio1 - ss
 - ss (slave select pin ) to the ground to select the slave
+- based on shift registers
+- modes: duplex; half-duplex; simplex;
+- slave or master mode; ss for each slave;
 
 ----- general info
 
+- IRQ == interrupt request
 - two tasks on core looks like simultaneously as it is too fast as from human perspective
 - each task has its own stack
 - at the end of the task it has to be deleted == vTaskDelete()
