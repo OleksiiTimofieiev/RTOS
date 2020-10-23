@@ -35,8 +35,8 @@
 - xTaskCreate == create subtask in the memory [RAM{Stack & Heap}] {TaskContolBlock, Stack}
 - xTaskCreate => TaskControlBlock, Task Stack, Ready tasks are being managed by scheduler;
 - virtual COM port can be used for debugging or semihosting (STM32 feature);
-- dumplex communication: Tx, Rx lines
-- every pin is on the bus, without clock it wont work, pins can be configured in different ways according to the datasheet
+- duplex communication: Tx, Rx lines
+- every pin is on the bus, without clock it wont work, pins can be configured in different ways according to the data-sheet
 - idle task is created by kernel itself
 - if ready and correct priority - will be executed
 - idle task deallocates all other tasks
@@ -45,7 +45,7 @@
 - RTOS is a kernel code
 - Memory Paramus are configured in some MCU configuration or RTOS: heap, stack
 - x == not a stdint type == naming convention; pc == pointer to char
-- Remember about power issues = organize tasks correctly
+- Remember about power issues = organise tasks correctly
 - RTOS func start with the name of the file == naming, pro == private void
 - VTaskDelay to have idle task
 - Task can be deleted, idle task deletes task, vTaskDeleteNULL if itself
@@ -54,4 +54,12 @@
 - Notifications can be used = TCB variable, event to task; wait - notify
 - all are on bus and has to be unblocked -> init and peripheral clock
 - everything has a register that can be checked/modified;
+- interrupt priority == priority of the kernel interrupt ( systick PendSV SVC interrupt )
+- lowest priority is the highest priority for interrupts and highest priority is for tasks
+- priority can be changed during the runtime (task priority set)
+- contexts: ISR (Interrupt Service Routine) and task context; if ISR = use FromISR
+- ISR preempts the thread context;
+- ISR context can not be in half done mode, not allowed by ARM Cortex M processor; half done ISR is not allowed without FROM ISR Api; any ISR has to be finished; special functions have to be used; they have higher priority task woken
+- suspend == never allowed to run on CPU; blocked state cat be unblocked with PendSV
+- delay => blocked state
 
