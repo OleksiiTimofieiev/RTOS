@@ -26,6 +26,12 @@
 - Virtual Com port is necessary to debug on PC
 - interrupts are available
 
+----- SPI (master - slave)
+
+- master and couple of slave devices
+- SCLK, MOSI (master out slave in), MISO, gpio1 - ss
+- ss (slave select pin ) to the ground to select the slave
+
 ----- general info
 
 - two tasks on core looks like simultaneously as it is too fast as from human perspective
