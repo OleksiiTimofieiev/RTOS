@@ -62,4 +62,5 @@
 - ISR context can not be in half done mode, not allowed by ARM Cortex M processor; half done ISR is not allowed without FROM ISR Api; any ISR has to be finished; special functions have to be used; they have higher priority task woken
 - suspend == never allowed to run on CPU; blocked state cat be unblocked with PendSV
 - delay => blocked state
+- hooks can be placed on the system events;
 
