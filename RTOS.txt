@@ -73,4 +73,5 @@
 - suspend == never allowed to run on CPU; blocked state cat be unblocked with PendSV
 - delay => blocked state
 - hooks can be placed on the system events;
+- xQueueCreate
 
