@@ -73,5 +73,23 @@
 - suspend == never allowed to run on CPU; blocked state cat be unblocked with PendSV
 - delay => blocked state
 - hooks can be placed on the system events;
-- xQueueCreate
+- interrupts have to be enabled;
+
+*** Critical ***
+
+- taskENTER_Critical -> interrupts will be blocked of the same priority
+- taskEXIT_Critical -> interrupts will be blocked of the same priority
+
+*** xQueue ***
+
+- xQueueCreate => QCB + size of queue; not enough memory - will return null; struct pointer is recommended as it takes struct pointer instead of struct itself
+- send to front/back
+- add to queue with no space in queue: return queue is full or wait (port_MAX_DELAY)
+- (void *) to be used
+- Receive - remove from the q, Peek - will not remove
+
+*** Software Timers ***
+
+- initiate and handle periodic events
+
 
